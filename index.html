@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <script>
+      function getUTMParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          utm_source: params.get("utm_source") || "",
+          utm_medium: params.get("utm_medium") || "",
+          utm_campaign: params.get("utm_campaign") || "",
+        };
+      }
+
+      function getGeolocation(callback) {
+        fetch("https://ipapi.co/json/")
+          .then((response) => response.json())
+          .then((data) =>
+            callback({ city: data.city, country: data.country_name })
+          )
+          .catch(() => callback({ city: "", country: "" }));
+      }
+
+      function redirectToForm() {
+        const utm = getUTMParams();
+        getGeolocation((loc) => {
+          // Replace the below with your actual pre-filled form link and entry IDs
+          const formBase =
+            "https://docs.google.com/forms/d/e/1FAIpQLSeTwCopxubLmMbAhOmo7-QqG3p-QQHT2nFsKdGUHknu0M1Brg/viewform?usp=pp_url";
+          const fullURL = `${formBase}&entry.396457430=${encodeURIComponent(
+            loc.city
+          )}&entry.1803644373=${encodeURIComponent(
+            loc.country
+          )}&entry.713263249=${encodeURIComponent(
+            utm.utm_source
+          )}&entry.456789=${encodeURIComponent(utm.utm_medium)}`;
+          window.location.href = fullURL;
+        });
+      }
+      redirectToForm();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to the form, please wait...</p>
+  </body>
+</html>
